@@ -31,6 +31,9 @@ export default function ReviewPostCard({element, DropDownElement}) {
         }
         ${element.CssCode}
       </style>
+      <head>
+      ${element.Tailwind ? '<script src="https://cdn.tailwindcss.com"></script>': ''}
+      </head>
       ${element.HtmlCode}`);
   }, [htmlCode, cssCode,element]);
 
@@ -43,6 +46,7 @@ const AcceptPost = async () => {
         CssCode: element.CssCode,
         Element_Type: element.Element_Type,
         PostTitle: element.PostTitle,
+        Tailwind: element.Tailwind,
         timestamp: serverTimestamp()
       }).then(data => console.log("success..."));
       await deleteDoc(
@@ -61,7 +65,7 @@ const AcceptPost = async () => {
         const docRef2 = await addDoc(
             collection(db, "Users", element.UserEmail, "Notifications"),
             {
-              notiification: ` Your Post ${element.PostTitle} has been Accepted by Admin`,
+              notiification: `🥳 Your Post ${element.PostTitle} has been Accepted by Admin`,
               timestamp: serverTimestamp(),
             }
           );

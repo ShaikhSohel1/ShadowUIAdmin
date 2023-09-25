@@ -31,6 +31,9 @@ export default function PostCard({element, DropDownElement}) {
         }
         ${element.CssCode}
       </style>
+      <head>
+      ${element.Tailwind ? '<script src="https://cdn.tailwindcss.com"></script>': ''}
+      </head>
       ${element.HtmlCode}`);
   }, [htmlCode, cssCode,element]);
 
