@@ -5,6 +5,8 @@ import {
   collection,
   doc,
   getDocs,
+  onSnapshot,
+  query,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -21,24 +23,29 @@ export default function AllPost() {
   const [filteredPost, setFilteredPost] = useState([]);
   const [DropDownElement, setDropDownElement] = useState("All");
   var filteredData = [];
-  const getPosts = async () => {
-    const docRef = await getDocs(collection(db, "Posts")).then(
-      (querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        setpost(newData);
-        console.log(newData);
-      }
-    );
+  const getPosts = () => {
+    const PostCollectionRef =  query(collection(db, "Posts"));
+
+    const unsubscribe = onSnapshot(PostCollectionRef, (querySnapshot) => {
+      const newData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+  
+      setpost(newData);
+      console.log(newData)
+  
+    });
+    return unsubscribe;
   };
-
+  
   useEffect(() => {
-    getPosts();
-  }, []);
+    const unsubscribe = getPosts();
+    return () => {
+      unsubscribe();
+    };
+  }, []); 
 
-  // filter data according to side bar selection
   useEffect(() => {
     console.log(DropDownElement)
     switch (DropDownElement) {
@@ -78,6 +85,7 @@ export default function AllPost() {
     }
     setFilteredPost(filteredData);
   }, [post, DropDownElement]);
+
 
   return (
     <div>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import Button from './Button'
 import { TrashIcon } from '@heroicons/react/24/solid'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, increment, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 
 function classNames(...classes) {
@@ -45,6 +45,9 @@ const AcceptPost = async () => {
         PostTitle: element.PostTitle,
         timestamp: serverTimestamp()
       }).then(data => console.log("success..."));
+      await deleteDoc(
+        doc(db, "Review", element.id)
+      );
 
       const userDocumentRef = doc(db, "Users", element.UserEmail);
       const userDocumentSnapshot = await getDoc(userDocumentRef);
@@ -77,16 +80,27 @@ const AcceptPost = async () => {
         const docRef1 = await addDoc(
             collection(db, "Users", element.UserEmail, "Notifications"),
             {
-              notiification: ` Your Post ${element.PostTitle} has been Accepted by Admin`,
+              notiification: `🥳 Your Post ${element.PostTitle} has been Accepted by Admin`,
               timestamp: serverTimestamp(),
             }
           );
     
       }
 
-
 }
 
+const onDeletePost = async () => {
+  await deleteDoc(
+    doc(db, "Review", element.id)
+  );
+  const docRef2 = await addDoc(
+    collection(db, "Users", element.UserEmail, "Notifications"),
+    {
+      notiification: `😡 Your Post ${element.PostTitle} has been Rejected by Admin`,
+      timestamp: serverTimestamp(),
+    }
+  );
+}
 
 
   return (
@@ -112,13 +126,18 @@ const AcceptPost = async () => {
       <p className='text-white font-semibold'>{element.userName}</p>
       </div>
       <div>
-<TrashIcon className='text-white h-6 w-6 transform hover:fill-red-500 hover:scale-125 transition duration-150'/>
+<TrashIcon className='text-white h-6 w-6 transform hover:fill-red-500 hover:scale-125 transition duration-150'
+onClick={onDeletePost}
+/>
       </div>
     </div>
     <div className='flex justify-between items-center mx-6 my-3'>
-      <div></div>
+      <div
+      ></div>
       
-      <Button />
+      <Button 
+       AcceptPost={AcceptPost}
+      />
     </div>
 </div>
 

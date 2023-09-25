@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import Navbar from './Navbar'
 import Button from './Button'
 import { TrashIcon } from '@heroicons/react/24/solid'
+import { db } from '../../firebase/firebase'
+import { addDoc, collection, deleteDoc, doc, serverTimestamp } from 'firebase/firestore'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -32,6 +34,18 @@ export default function PostCard({element, DropDownElement}) {
       ${element.HtmlCode}`);
   }, [htmlCode, cssCode,element]);
 
+  const onDeletePost = async () => {
+    await deleteDoc(
+      doc(db, "Posts", element.id)
+    );
+    const docRef2 = await addDoc(
+      collection(db, "Users", element.UserEmail, "Notifications"),
+      {
+        notiification: `😡 Your Post ${element.PostTitle} has been Deleted by Admin`,
+        timestamp: serverTimestamp(),
+      }
+    );
+  }
 
   return (
     
@@ -56,7 +70,9 @@ export default function PostCard({element, DropDownElement}) {
       <p className='text-white font-semibold'>{element.userName}</p>
       </div>
       <div>
-<TrashIcon className='text-white h-6 w-6 transform hover:fill-red-500 hover:scale-125 transition duration-150'/>
+<TrashIcon className='text-white h-6 w-6 transform hover:fill-red-500 hover:scale-125 transition duration-150'
+onClick={onDeletePost}
+/>
       </div>
     </div>
     <div className='flex justify-between items-center mx-6 my-3'>

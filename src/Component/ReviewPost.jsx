@@ -5,6 +5,8 @@ import {
   collection,
   doc,
   getDocs,
+  onSnapshot,
+  query,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -22,24 +24,30 @@ export default function ReviewPost() {
   const [filteredPost, setFilteredPost] = useState([]);
   const [DropDownElement, setDropDownElement] = useState("All");
   var filteredData = [];
-  const getPosts = async () => {
-    const docRef = await getDocs(collection(db, "Posts")).then(
-      (querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        setpost(newData);
-        console.log(newData);
-      }
-    );
+  const getPosts = () => {
+ 
+    const PostCollectionRef =  query(collection(db, "Review"));
+  
+    const unsubscribe = onSnapshot(PostCollectionRef, (querySnapshot) => {
+      const newData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+  
+      setpost(newData);
+      console.log(newData)
+  
+    });
+    return unsubscribe;
   };
-
+  
   useEffect(() => {
-    getPosts();
-  }, []);
+    const unsubscribe = getPosts();
+    return () => {
+      unsubscribe();
+    };
+  }, []); 
 
-  // filter data according to side bar selection
   useEffect(() => {
     console.log(DropDownElement)
     switch (DropDownElement) {
@@ -80,6 +88,10 @@ export default function ReviewPost() {
     setFilteredPost(filteredData);
   }, [post, DropDownElement]);
 
+
+
+
+
   return (
     <div>
       <div className="flex justify-between items-center mx-10">
@@ -92,7 +104,7 @@ export default function ReviewPost() {
        className={classNames(DropDownElement == "Forms" ? ' md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2':' md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3','grid grid-cols-1 mt-10 gap-6 m-4')}
       >
         {filteredPost.map((element) => (
-          <ReviewPostCard element={element} DropDownElement={DropDownElement} />
+          <ReviewPostCard element={element} DropDownElement={DropDownElement}/>
 
         ))}
       </div>
