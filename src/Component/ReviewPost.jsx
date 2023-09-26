@@ -14,12 +14,14 @@ import { db } from "../../firebase/firebase";
 import PostCard from "./PostCard";
 import DropDown from "./DropDown";
 import ReviewPostCard from "./ReviewPostcard";
+import { useSession } from "next-auth/react";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
   }
 
 export default function ReviewPost() {
+  const {data: session, status}= useSession();
   const [post, setpost] = useState([]);
   const [filteredPost, setFilteredPost] = useState([]);
   const [DropDownElement, setDropDownElement] = useState("All");
@@ -93,7 +95,8 @@ export default function ReviewPost() {
 
 
   return (
-    <div>
+    session && (session.user.email == "vivekgunjal619@gmail.com" || session.user.email == "sh1052887120@gmail.com" || session.user.email == "uiverse7@gmail.com") ? (
+      <div>
       <div className="flex justify-between items-center mx-10">
         <p className="font-bold xl:text-4xl text-2xl underline text-white">
           Review Posts
@@ -109,5 +112,11 @@ export default function ReviewPost() {
         ))}
       </div>
     </div>
+    ):(
+      <div className="flex justify-center items-center text-white font-medium">
+      You Are Not Allowed To Authorized this Page
+    </div>
+    )
+
   );
 }

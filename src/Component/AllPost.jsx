@@ -13,12 +13,17 @@ import {
 import { db } from "../../firebase/firebase";
 import PostCard from "./PostCard";
 import DropDown from "./DropDown";
+import { useSession } from "next-auth/react";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
   }
 
 export default function AllPost() {
+  const {data: session, status}= useSession();
+
+
+
   const [post, setpost] = useState([]);
   const [filteredPost, setFilteredPost] = useState([]);
   const [DropDownElement, setDropDownElement] = useState("All");
@@ -86,9 +91,10 @@ export default function AllPost() {
     setFilteredPost(filteredData);
   }, [post, DropDownElement]);
 
-
+// https://avatars.githubusercontent.com/u/98222121?v=4
   return (
-    <div>
+    session && (session.user.email == "vivekgunjal619@gmail.com" || session.user.email == "sh1052887120@gmail.com" || session.user.email == "uiverse7@gmail.com") ? (
+      <div>
       <div className="flex justify-between items-center mx-10">
         <p className="font-bold xl:text-4xl text-2xl underline text-white">
           All Posts
@@ -103,5 +109,11 @@ export default function AllPost() {
         ))}
       </div>
     </div>
+    ):(
+      <div className="flex justify-center items-center text-white font-medium">
+        You Are Not Allowed To Authorized this Page
+      </div>
+    )
+   
   );
 }

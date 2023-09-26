@@ -2,6 +2,7 @@ import Navbar from '@/Component/Navbar'
 import './globals.css'
 import { Ubuntu } from 'next/font/google'
 import Sidebar from '@/Component/Sidebar'
+import AuthProvider from '@/Component/AuthProvider'
 
 const inter = Ubuntu({ subsets: ['greek'], weight: "400"})
 
@@ -13,10 +14,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      
+     
       <body className="bg-[#1e1e1e]">
+      <AuthProvider>
       <Navbar />
-        {children}</body>
+        {children}
+        </AuthProvider>
+        </body>
+        
     </html>
   )
 }
