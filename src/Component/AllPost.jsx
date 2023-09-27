@@ -55,6 +55,7 @@ export default function AllPost() {
     console.log(DropDownElement)
     switch (DropDownElement) {
       case "All":
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         filteredData = post.filter(
           (item) => item.Element_Type != "Cards" && item.Element_Type != "Forms"
         );
@@ -105,7 +106,7 @@ export default function AllPost() {
        className={classNames(DropDownElement == "Forms" ? ' md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-2':' md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3','grid grid-cols-1 mt-10 gap-6 m-4')}
       >
         {filteredPost.map((element) => (
-          <PostCard element={element} DropDownElement={DropDownElement} />
+          <PostCard element={element} DropDownElement={DropDownElement} key={element} />
         ))}
       </div>
     </div>
